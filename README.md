@@ -29,19 +29,21 @@ A modern, responsive, and customizable Blogger/Blogspot template designed for bl
 
 ## 🎨 Demo
 
-> **Note**: A live demo will be available soon. Check back later!
+> **Note**: Live demo coming soon! Star the repository to stay updated.
 
 ## 📦 Installation
 
-### Method 1: Direct Upload
+### Method 1: Direct Upload (When Available)
 
-1. Download the template XML file from the [releases page](https://github.com/SahooShuvranshu/SahooShuvranshuBlogTemplate/releases)
+1. Download the template XML file from the [releases page](https://github.com/SahooShuvranshu/SahooShuvranshuBlogTemplate/releases) when available
 2. Log in to your Blogger dashboard
 3. Go to **Theme** section
 4. Click on the dropdown menu (three vertical dots) next to "Customize"
 5. Select **Restore** > **Upload**
 6. Choose the downloaded XML file
 7. Click **Upload** and confirm
+
+> **Note**: Template releases are coming soon. Watch this repository for updates!
 
 ### Method 2: Manual Installation
 
