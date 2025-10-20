@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en" dir="<$BlogLanguageDirection$>" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title><$BlogPageTitle$></title>
+  
+  <$BlogMetaData$>
+  
+  <!-- Fonts: 'VT323' for a classic terminal feel -->
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  
+  <style>
+/*
+-----------------------------------------------
+VAULT-TEC TERMINAL THEME (v12)
+The definitive and final post-apocalyptic UI.
+----------------------------------------------- */
+
+:root {
+  /* Dark Mode (Default) - Pip-Boy Green */
+  --bg-primary: #1e3523;
+  --bg-secondary: #0c180e;
+  --text-primary: #86e402; /* Muted Green */
+  --text-secondary: #5a7b3b;
+  --text-accent: #ffd700; /* Gold for a worn-out touch */
+  --border-color: #86e402; /* Muted Green */
+  --shadow-color: rgba(134, 228, 2, 0.4); /* Muted Green Shadow */
+}
+
+/* Light Mode (Holotape/Worn Paper) */
+[data-theme="light"] {
+  --bg-primary: #efebe0; /* Soft parchment background */
+  --bg-secondary: #fdfaf3; /* Lighter inner background */
+  --text-primary: #453c29; /* Dark brown text */
+  --text-secondary: #7a6e5b; /* Muted secondary text */
+  --text-accent: #cc7a00; /* Vintage accent color */
+  --border-color: #7a6e5b;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Red Alert Mode */
+[data-theme="red-alert"] {
+  --bg-primary: #3d1b1b;
+  --bg-secondary: #1a0808;
+  --text-primary: #ff4d4d;
+  --text-secondary: #ff8c8c;
+  --text-accent: #ff0000;
+  --border-color: #ff4d4d;
+  --shadow-color: rgba(255, 77, 77, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'VT323', monospace;
+  line-height: 1.6;
+  transition: background-color 0.5s ease, color 0.5s ease;
+  overflow-x: hidden;
+  font-size: 16px;
+}
+
+/* Scanline Effect */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.5;
+}
+
+/* --- Loading Screen Animation --- */
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 1s ease;
+}
+
+#typing-text {
+  font-family: 'VT323', monospace;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  white-space: pre-wrap;
+  overflow: hidden;
+  position: relative;
+  max-width: 90vw;
+  padding: 0 1rem;
+}
+
+#typing-text::after {
+  content: '_';
+  color: var(--text-primary);
+  animation: blink-cursor 1s infinite;
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+#loading-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* TV Static Effect */
+.static-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9998;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp3YpWAAAAPVBMVEVvb29wcHBra2t0dHRmZmZpaWlxcXFwcHBubm5ubm5vb29wcHBvb29wcHBvb29ubm5wcHBvb29wcHBvb2+R4qYxAAAAFHRSTlMAAQIDBAUGBwgJCgsMDQ4PEBESFBUWFxgZ6+o7sAAAAMklEQVRIx42VuxKAQAwFm9G9/y2d1t7Sg4Q86q0p9r9T9R/2z9p/8q8j+h/5m4+29v6k8WwYAgWDAA3DAAQwAAMYAAYYAAXDAAQwAAIwAAYwAATAAAzAAAyjAARAAApwAATAAAxAAAtDAAPAAAMwAAMQAAAYAAIAAAcAAAMAAAIAAAAwAAIAAAcAAAMAAAMAAAAYAAIAAAAAAgAAYAAAAABgABgAAAAAAAwAAgAAYAAADDAAAgAAAAAIAADAAAAAAAYAgAAGAAABAAAAAIAAAAYgAAMAAAAgAAAgAAMAACAAQDAAAwAAMAAACDAAEAAAMAAAMAAAAYAAIAP32hXjW87JgAAAAAASUVORK5CYII=');
+    background-repeat: repeat;
+    animation: static-flicker 0.2s infinite;
+    display: none;
+}
+.static-overlay.active {
+    display: block;
+}
+@keyframes static-flicker {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.4; }
+}
+
+/* --- Main Layout --- */
+.terminal-frame {
+  max-width: 1200px;
+  margin: 1rem auto;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 0 10px var(--shadow-color);
+  min-height: 95vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+@media (min-width: 768px) {
+  .terminal-frame {
+    flex-direction: row;
+  }
+}
+
+.main-content {
+  flex: 3;
+  padding: 2rem;
+  border-right: 2px solid var(--border-color);
+}
+
+.sidebar {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* --- Headers and Titles --- */
+.blog-header {
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.blog-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.blog-header a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s;
+}
+
+.blog-header a:hover {
+  color: var(--text-accent);
+}
+
+.blog-header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.post-title, .sidebar-title, .comments-header {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+  text-transform: uppercase;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 5px;
+  margin-bottom: 1rem;
+}
+
+/* --- Post and Content Blocks --- */
+.post-container, .sidebar-section, .comments-container {
+  padding: 1.5rem;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 0 10px var(--shadow-color);
+  margin-bottom: 2rem;
+  background-color: transparent;
+  border-radius: 8px;
+}
+
+.post-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.post-content {
+  font-size: 1rem;
+  color: var(--text-primary);
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.post-footer {
+  font-size: 0.8rem;
+  margin-top: 1rem;
+  text-align: right;
+}
+
+.post-footer a {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.post-footer a:hover {
+  color: var(--text-accent);
+}
+
+/* --- Sidebar --- */
+.sidebar-section {
+  padding: 1.5rem;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 0 10px var(--shadow-color);
+  margin-bottom: 2rem;
+  background-color: transparent;
+  border-radius: 8px;
+}
+
+.sidebar-title {
+  margin-bottom: 1rem;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-item a {
+  display: block;
+  padding: 0.5rem 0;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.sidebar-item a:hover {
+  color: var(--text-primary);
+}
+
+/* --- Custom Profile Block Styling --- */
+.profile-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-size: 0.9rem;
+}
+.profile-block h3 {
+    text-align: left;
+    width: 100%;
+}
+.profile-img img {
+    max-width: 100px;
+    height: auto;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+.profile-data {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+.profile-data a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.profile-data a:hover {
+    color: var(--text-accent);
+}
+.profile-link {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+}
+.profile-link:hover {
+    color: var(--text-accent);
+}
+
+/* --- Dark/Light Mode Toggle --- */
+.mode-toggle {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 0 15px var(--shadow-color);
+  transition: background 0.3s, border-color 0.3s, transform 0.2s ease-in-out;
+}
+.mode-toggle:hover {
+    transform: translateY(-2px);
+}
+.mode-toggle svg {
+    width: 24px;
+    height: 24px;
+    color: var(--text-primary);
+}
+
+/* --- Footer --- */
+.blog-footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+.blog-footer span {
+  cursor: pointer;
+}
+
+/* --- Easter Egg Modals --- */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 9000;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.modal-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-content {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  padding: 2rem;
+  box-shadow: 0 0 20px var(--shadow-color);
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+}
+.modal-content .close-btn {
+  float: right;
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.modal-content h3 {
+  color: var(--text-primary);
+  text-transform: uppercase;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 5px;
+}
+.modal-content p {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-top: 1rem;
+}
+
+/* --- Custom Right-Click Menu Specific Styles --- */
+#custom-right-click-menu {
+  position: fixed !important;
+  display: none !important;
+  background-color: transparent !important;
+  z-index: 10000 !important;
+  opacity: 1 !important;
+  top: auto !important;
+  left: auto !important;
+  width: auto !important;
+  height: auto !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+}
+#custom-right-click-menu.active {
+  display: block !important;
+}
+#custom-right-click-menu .modal-content {
+  max-width: 200px !important;
+  max-height: auto !important;
+  padding: 0.5rem 0 !important;
+  width: auto !important;
+}
+#custom-right-click-menu .sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#custom-right-click-menu .sidebar-item a {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+#custom-right-click-menu .sidebar-item a:hover {
+  background-color: var(--shadow-color);
+  color: var(--text-primary);
+  padding-left: 1.2rem;
+}
+
+/* --- Responsive & Mobile --- */
+@media (max-width: 767px) {
+  .terminal-frame {
+    margin: 0;
+    border: none;
+    min-height: 100vh;
+  }
+  .main-content, .sidebar {
+    padding: 1rem;
+    border-right: none;
+  }
+  .post-container, .sidebar-section {
+    padding: 1rem;
+  }
+  .blog-header h1 {
+    font-size: 2rem;
+  }
+  .mode-toggle {
+    bottom: 1rem;
+    right: 1rem;
+  }
+}
+  </style>
+
+  <script>
+    // --- Sound Effects ---
+    let audioContext;
+    function playTerminalClick() {
+      try {
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.type = 'square';
+        oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.05);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.05);
+      } catch (e) {
+        console.error("Audio playback failed:", e);
+      }
+    }
+
+    // --- Loading Screen Animation ---
+    window.onload = function() {
+      const date = new Date();
+      const hour = date.getHours();
+      const isRedAlert = (hour >= 23 || hour < 5);
+      
+      if (isRedAlert) {
+        document.documentElement.setAttribute('data-theme', 'red-alert');
+      }
+
+      const loadingScreen = document.getElementById('loading-screen');
+      const typingText = document.getElementById('typing-text');
+      const staticOverlay = document.querySelector('.static-overlay');
+
+      const loadingMessages = [
+        ">>> VAULT-TEC OS V5.1 LOADED.",
+        ">>> ACCESSING PERSONNEL DATABASE...",
+        ">>> RETRIEVING LIFE LOGS... SUCCESS.",
+        ">>> STANDBY FOR DATA STREAM..."
+      ];
+      const errorMessages = [
+        "FATAL ERROR: KERNEL PANIC",
+        "SYSTEM_FAILURE: DATA CORRUPTION DETECTED",
+        "ERROR: UNKNOWN ENTITY DETECTED",
+        "PROTOCOL_VIOLATION: ACCESS DENIED",
+        "NETWORK ERROR: OFFLINE",
+        "TERMINAL LOCKDOWN: UNAUTHORIZED USER"
+      ];
+      
+      let messageIndex = 0;
+      let charIndex = 0;
+      let isErrorTriggered = false;
+
+      function typeMessage() {
+        if (isErrorTriggered) return;
+        if (messageIndex < loadingMessages.length) {
+          const currentMessage = loadingMessages[messageIndex];
+          
+          if (charIndex < currentMessage.length) {
+            typingText.textContent += currentMessage.charAt(charIndex);
+            charIndex++;
+            playTerminalClick();
+            setTimeout(typeMessage, 30);
+          } else {
+            typingText.textContent += '\n\n';
+            charIndex = 0;
+            messageIndex++;
+
+            if (isRedAlert && Math.random() > 0.6) { // 40% chance for an error
+                isErrorTriggered = true;
+                const randomError = errorMessages[Math.floor(Math.random() * errorMessages.length)];
+                typingText.textContent += randomError + '\n\n';
+                staticOverlay.classList.add('active');
+                setTimeout(() => {
+                    loadingScreen.classList.add('fade-out');
+                }, 1000); // 1s delay before skipping
+                return;
+            }
+            setTimeout(typeMessage, 500);
+          }
+        } else {
+          // All typing finished, fade out normally
+          setTimeout(() => {
+            loadingScreen.classList.add('fade-out');
+          }, 1500);
+        }
+      }
+      typeMessage();
+    };
+
+    // --- All 10 Easter Eggs ---
+    document.addEventListener('DOMContentLoaded', function() {
+      
+      // Egg 1: Classified Intel Modal (Footer & Sidebar Link)
+      const classifiedLinks = document.querySelectorAll('a[onclick="toggleClassifiedModal(true)"]');
+      classifiedLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          toggleClassifiedModal(true);
+        });
+      });
+      window.toggleClassifiedModal = function(show) {
+        const modal = document.getElementById('classified-modal');
+        if (show) {
+          modal.classList.add('active');
+        } else {
+          modal.classList.remove('active');
+        }
+      };
+
+      // Egg 2: Konami Code (Desktop & Mobile)
+      const konamiCodeDesktop = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+      let konamiIndexDesktop = 0;
+      document.addEventListener('keyup', (e) => {
+        if (e.key.toLowerCase() === konamiCodeDesktop[konamiIndexDesktop]) {
+          konamiIndexDesktop++;
+          if (konamiIndexDesktop === konamiCodeDesktop.length) {
+            konamiIndexDesktop = 0;
+            toggleClassifiedModal(true);
+          }
+        } else {
+          konamiIndexDesktop = 0;
+        }
+      });
+      let konamiTapCount = 0;
+      let lastTap = 0;
+      const tapThreshold = 300;
+      const requiredTaps = 4;
+      const blogTitleLink = document.querySelector('.blog-header h1 a');
+      
+      if(blogTitleLink){
+        blogTitleLink.addEventListener('touchend', (e) => {
+          const currentTime = new Date().getTime();
+          if (currentTime - lastTap < tapThreshold) {
+            konamiTapCount++;
+          } else {
+            konamiTapCount = 1;
+          }
+          lastTap = currentTime;
+
+          if (konamiTapCount === requiredTaps) {
+            e.preventDefault();
+            toggleClassifiedModal(true);
+            konamiTapCount = 0;
+          }
+        });
+      }
+
+
+      // Egg 3: Hidden Hover Quote (Footer)
+      const footerText = document.querySelector('.footer-text');
+      const originalText = footerText.textContent;
+      if (footerText) {
+        footerText.addEventListener('mouseenter', () => {
+          footerText.textContent = 'STANDBY... FLAWLESS OPERATION... STANDBY';
+        });
+        footerText.addEventListener('mouseleave', () => {
+          footerText.textContent = originalText;
+        });
+        footerText.addEventListener('touchend', () => {
+          if (footerText.textContent === originalText) {
+            footerText.textContent = 'STANDBY... FLAWLESS OPERATION... STANDBY';
+          } else {
+            footerText.textContent = originalText;
+          }
+        });
+      }
+
+      // Egg 4: Interactive System Status (Footer)
+      const statusElement = document.getElementById('system-status');
+      if (statusElement) statusElement.addEventListener('click', () => {
+        const systemReport = `
+          <h3 class="comments-header">
+            [ VAULT-TEC UNIFIED OPERATING SYSTEM v5.1 ]
+            <a href="javascript:void(0)" onclick="toggleSystemModal(false)" class="close-btn">[ CLOSE ]</a>
+          </h3>
+          <div class="post-content" style="margin-top:1rem;">
+            <p>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
+            <p><strong>SYSTEM DIAGNOSTICS REPORT</strong></p>
+            <p>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
+            <p></p>
+            <p><strong>▸ HARDWARE SPECIFICATIONS</strong></p>
+            <p>  Processor: AMD RYZEN 9 5900X (12-Core @ 3.7GHz)</p>
+            <p>  RAM Available: 32 GB DDR4</p>
+            <p>  Memory Usage: 15%</p>
+            <p>  Storage: SSD 2TB [█████░░░░░░░░░░░░ 24%]</p>
+            <p></p>
+            <p><strong>▸ NETWORK STATUS</strong></p>
+            <p>  Connection: <span style="color: var(--text-accent);">█ SECURE █</span></p>
+            <p>  Latency: 42ms</p>
+            <p>  Data Transfer Rate: 1.2 Gbps</p>
+            <p>  Firewall Status: ACTIVE</p>
+            <p></p>
+            <p><strong>▸ SYSTEM HEALTH</strong></p>
+            <p>  System Integrity: <strong style="color: var(--text-accent);">[ 100% ]</strong></p>
+            <p>  Kernel Version: 5.1.0-23-generic</p>
+            <p>  OS Uptime: 847 Hours</p>
+            <p>  Temperature: 38°C (NORMAL)</p>
+            <p></p>
+            <p><strong>▸ SESSION INFORMATION</strong></p>
+            <p>  Last Log-in: <$BlogCurrentDateTime$></p>
+            <p>  Unique Sessions: 847</p>
+            <p>  Current User Level: STANDARD</p>
+            <p>  Authentication: BIOMETRIC_VERIFIED</p>
+            <p></p>
+            <p><strong>▸ SERVICE STATUS</strong></p>
+            <p>  Blog Engine: <span style="color: var(--text-accent);">█ RUNNING █</span></p>
+            <p>  Comment Parser: <span style="color: var(--text-accent);">█ RUNNING █</span></p>
+            <p>  Archive System: <span style="color: var(--text-accent);">█ RUNNING █</span></p>
+            <p>  Backup Daemon: <span style="color: var(--text-accent);">█ RUNNING █</span></p>
+            <p></p>
+            <p style="text-align: center; color: var(--text-secondary);">[ All systems nominal ]</p>
+            <p style="text-align: center; font-size: 0.8rem; color: var(--text-secondary);">[ Report generated on <$BlogCurrentDateTime$> ]</p>
+          </div>
+        `;
+        const systemModal = document.getElementById('system-modal');
+        if (systemModal) systemModal.innerHTML = systemReport;
+        toggleSystemModal(true);
+      });
+      window.toggleSystemModal = function(show) {
+        const modal = document.getElementById('system-modal-overlay');
+        if (show) {
+          modal.classList.add('active');
+        } else {
+          modal.classList.remove('active');
+        }
+      };
+
+      // Egg 5: Clickable Logo (Footer)
+      const secretLogo = document.getElementById('vault-tec-logo');
+      if (secretLogo) secretLogo.addEventListener('click', () => {
+        toggleClassifiedModal(true);
+      });
+
+      // Egg 6: Custom Right-Click Menu
+      document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        const customMenu = document.getElementById('custom-right-click-menu');
+        if(customMenu) {
+            let top = e.clientY;
+            let left = e.clientX;
+            
+            // Prevent menu from going off-screen
+            const menuWidth = 200;
+            const menuHeight = 150;
+            if (left + menuWidth > window.innerWidth) {
+                left = window.innerWidth - menuWidth - 10;
+            }
+            if (top + menuHeight > window.innerHeight) {
+                top = window.innerHeight - menuHeight - 10;
+            }
+            
+            customMenu.style.top = `${top}px`;
+            customMenu.style.left = `${left}px`;
+            customMenu.classList.add('active');
+        }
+      });
+      document.addEventListener('click', () => {
+        const customMenu = document.getElementById('custom-right-click-menu');
+        if(customMenu) customMenu.classList.remove('active');
+      });
+
+      // Egg 7: Animated Blog Title
+      if(blogTitleLink) {
+          const originalTitleText = blogTitleLink.textContent;
+          blogTitleLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const phrases = ['ACCESSING_MAIN_DIRECTORY', 'RECALIBRATING_SYSTEMS', 'TERMINAL_ROOT_ACCESS'];
+            const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+            blogTitleLink.textContent = randomPhrase;
+            setTimeout(() => {
+              blogTitleLink.textContent = originalTitleText;
+            }, 1000);
+          });
+      }
+      
+      // Egg 8: Title Bar Easter Egg
+      if(blogTitleLink) {
+        const originalDocTitle = document.title;
+        let titleInterval = null;
+        blogTitleLink.addEventListener('click', () => {
+          if (titleInterval) clearInterval(titleInterval);
+          let frames = ['[ ACCESSING... ]', '[ DATA CORRUPTED ]', '[ RETRYING... ]'];
+          let frameIndex = 0;
+          titleInterval = setInterval(() => {
+            document.title = frames[frameIndex % frames.length];
+            frameIndex++;
+          }, 300);
+          setTimeout(() => {
+            clearInterval(titleInterval);
+            document.title = originalDocTitle;
+          }, 3000);
+        });
+      }
+
+      // Egg 9: Dynamic Time-Based Red Alert
+      const date = new Date();
+      const hour = date.getHours();
+      if (hour >= 23 || hour < 5) {
+        document.documentElement.setAttribute('data-theme', 'red-alert');
+      }
+
+      // Egg 10: Loading Screen Glitch & Error
+      // This is part of the window.onload script, already implemented and working correctly.
+      
+      // Attach terminal click sound to all links
+      document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', playTerminalClick);
+      });
+    });
+
+    // --- Dark/Light Mode Toggle ---
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      
+      if (currentTheme === 'light') {
+        html.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        updateThemeIcon('dark');
+      } else if (currentTheme === 'dark') {
+        html.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+        updateThemeIcon('light');
+      } else {
+        // Red alert mode, toggle to dark theme first
+        html.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        updateThemeIcon('dark');
+      }
+    }
+    
+    function updateThemeIcon(theme) {
+      const iconContainer = document.querySelector('.mode-toggle');
+      if (!iconContainer) return;
+      
+      const sunSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+      const moonSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+      
+      iconContainer.innerHTML = theme === 'light' ? moonSvg : sunSvg;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      let initialTheme = 'dark';
+
+      if (savedTheme) {
+        initialTheme = savedTheme;
+      } else if (prefersDark) {
+        initialTheme = 'dark';
+      }
+      
+      const date = new Date();
+      const hour = date.getHours();
+      if (hour >= 23 || hour < 5) {
+        initialTheme = 'red-alert';
+      }
+
+      document.documentElement.setAttribute('data-theme', initialTheme);
+      updateThemeIcon(initialTheme);
+    });
+  </script>
+
+</head>
+
+<body>
+
+<!-- Loading Screen -->
+<div id="loading-screen">
+  <div id="typing-text"></div>
+</div>
+<div class="static-overlay"></div>
+
+<!-- Custom Right-Click Menu -->
+<div id="custom-right-click-menu" class="modal-overlay">
+  <div class="modal-content">
+    <h3 class="comments-header">[ CONTEXT MENU ]</h3>
+    <ul class="sidebar-list">
+      <li class="sidebar-item"><a href="javascript:void(0)" onclick="window.print()">[ █ PRINT LOGS ]</a></li>
+      <li class="sidebar-item"><a href="javascript:void(0)" onclick="toggleClassifiedModal(true)">[ █ DECRYPT FILE ]</a></li>
+      <li class="sidebar-item"><a href="javascript:void(0)" onclick="alert('TRANSMISSION SECURED: All credentials encrypted.')">[ █ VERIFY SECURITY ]</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Easter Egg Modals -->
+<div id="classified-modal" class="modal-overlay" onclick="toggleClassifiedModal(false)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h3 class="comments-header">
+      [ SHUVRANSHU LOGBOOK ]
+      <a href="javascript:void(0)" onclick="toggleClassifiedModal(false)" class="close-btn">[ CLOSE ]</a>
+    </h3>
+    <div class="post-content" style="margin-top:1rem;">
+      <p>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
+      <p><strong>PERSONAL LOGBOOK - SHUVRANSHU SEKHAR SAHOO</strong></p>
+      <p>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
+      <p></p>
+      <p><strong>AUTHOR:</strong> Shuvranshu Sekhar Sahoo</p>
+      <p><strong>STATUS:</strong> <span style="color: var(--text-accent);">█ ACTIVE █</span></p>
+      <p><strong>LAST UPDATED:</strong> <$BlogCurrentDateTime$></p>
+      <p></p>
+      <p><strong>ABOUT ME:</strong></p>
+      <p>Welcome to my personal logbook. This is a space where I document my thoughts, experiences, and insights on technology, life, and everything in between. Every post here represents a moment captured in time, a reflection of my journey.</p>
+      <p></p>
+      <p><strong>INTERESTS & EXPERTISE:</strong></p>
+      <p>▸ Web Development & Design</p>
+      <p>▸ Open Source Contribution</p>
+      <p>▸ Technology & Innovation</p>
+      <p>▸ Blogging & Content Creation</p>
+      <p>▸ Creative Problem Solving</p>
+      <p></p>
+      <p><strong>MISSION:</strong></p>
+      <p>Share knowledge, inspire creativity, and build a community of like-minded individuals. Every post is crafted with care and attention to detail. Comments and feedback are always welcome and appreciated.</p>
+      <p></p>
+      <p><strong>LOGBOOK HIGHLIGHTS:</strong></p>
+      <p>• Documenting daily learnings and discoveries</p>
+      <p>• Sharing project experiences and case studies</p>
+      <p>• Discussing emerging technologies</p>
+      <p>• Connecting with fellow enthusiasts</p>
+      <p></p>
+      <p><strong>CONNECTION STATUS:</strong></p>
+      <p>Blog Status: <span style="color: var(--text-accent);">█ ACTIVE █</span></p>
+      <p>Community Engagement: <span style="color: var(--text-accent);">█ OPEN █</span></p>
+      <p>Response Time: <span style="color: var(--text-accent);">█ AVAILABLE █</span></p>
+      <p></p>
+      <p><strong>THANK YOU FOR VISITING</strong></p>
+      <p>Thank you for stopping by my logbook. I hope you find value in the content shared here. Feel free to explore, learn, and connect!</p>
+      <p></p>
+      <p>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
+      <p style="text-align: center; font-size: 0.8rem; color: var(--text-secondary);">[ END ENTRY ]</p>
+    </div>
+  </div>
+</div>
+
+<div id="system-modal-overlay" class="modal-overlay" onclick="toggleSystemModal(false)">
+  <div id="system-modal" class="modal-content" onclick="event.stopPropagation()">
+    <!-- System report content will be injected here by JS -->
+  </div>
+</div>
+
+<!-- Main Terminal Frame -->
+<div class="terminal-frame">
+  
+  <main class="main-content">
+    <header class="blog-header">
+      <h1>
+        <ItemPage><a href="<$BlogURL$>"></ItemPage>
+        <$BlogTitle$>
+        <ItemPage></a></ItemPage>
+      </h1>
+      <p><$BlogDescription$></p>
+    </header>
+
+    <Blogger>
+      <BlogDateHeader>
+        <div class="post-meta">-- [ ACCESSING LOG: <$BlogDateHeaderDate$> ] --</div>
+      </BlogDateHeader>
+
+      <article class="post-container">
+        <a name="<$BlogItemNumber$>"></a>
+        
+        <BlogItemTitle>
+          <BlogItemUrl><a href="<$BlogItemUrl$>" title="external link"></BlogItemUrl>
+          <h2 class="post-title"><$BlogItemTitle$></h2>
+          <BlogItemUrl></a></BlogItemUrl>
+        </BlogItemTitle>
+        <div class="post-meta">
+          LOGGED BY <$I18NPostedByAuthorNickname$> ON <a href="<$BlogItemPermalinkUrl$>"><$BlogItemDateTime$></a>
+        </div>
+
+        <div class="post-content">
+          <$BlogItemBody$>
+        </div>
+
+        <footer class="post-footer">
+          <BlogItemCommentsEnabled>
+            <a href="javascript:void(0)" onclick="toggleClassifiedModal(true)">
+              [ DECRYPTING MESSAGES (<$I18NNumComments$>) ]
+            </a>
+          </BlogItemCommentsEnabled>
+          <$BlogItemControl$>
+        </footer>
+      </article>
+
+      <!-- Comments Section -->
+      <ItemPage>
+        <section class="comments-container">
+          <BlogItemCommentsEnabled>
+            <a name="comments"></a>
+            <h3 class="comments-header">DECRYPTED MESSAGES (<$I18NNumComments$>)</h3>
+            
+            <div id="comments-block">
+              <$CommentPager$>
+              <BlogItemComments>
+                <div class="comment-item post-content">
+                  <div class="post-meta comment-header">
+                    <span class="comment-author"><$I18NCommentAuthorSaid$></span>
+                    <span class="comment-time">AT <$I18NAtCommentTimeWithPermalink$></span>
+                  </div>
+                  <div class="comment-body">
+                    <$BlogCommentBody$>
+                  </div>
+                  <$BlogCommentDeleteIcon$>
+                </div>
+              </BlogItemComments>
+              <$CommentPager$>
+            </div>
+          </BlogItemCommentsEnabled>
+        </section>
+      </ItemPage>
+    </Blogger>
+  </main>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    
+    <!-- About Me Section -->
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">PERSONNEL FILE</h3>
+      <div class="profile-block">
+        <$BlogMemberProfile$>
+      </div>
+    </div>
+    
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">HOLOTAPE ARCHIVE</h3>
+      <ul class="sidebar-list">
+        <BloggerArchives>
+          <li class="sidebar-item">
+            <a href="<$BlogArchiveURL$>" class="sidebar-link">VIEW LOGS: <$BlogArchiveName$></a>
+          </li>
+        </BloggerArchives>
+      </ul>
+    </div>
+
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">MISSION LOGS</h3>
+      <ul class="sidebar-list">
+        <BloggerPreviousItems>
+          <li class="sidebar-item">
+            <a href="<$BlogItemPermalinkURL$>" class="sidebar-link"><$BlogPreviousItemTitle$></a>
+          </li>
+        </BloggerPreviousItems>
+      </ul>
+    </div>
+    
+    <!-- Secret Easter Egg Link -->
+    <div class="sidebar-section">
+      <ul class="sidebar-list">
+        <li class="sidebar-item">
+          <a href="javascript:void(0)" onclick="toggleClassifiedModal(true)" class="sidebar-link">[ ACCESS CLASSIFIED INTEL ]</a>
+        </li>
+      </ul>
+    </div>
+
+  </aside>
+
+</div>
+
+<footer class="blog-footer">
+  <span id="vault-tec-logo">VAULT-TEC</span><br>
+  <span id="system-status">[ TERMINAL STATUS: SECURE ]</span><br>
+  <span class="footer-text">[ DATA STREAM: ACTIVE ]</span>
+</footer>
+
+<button class="mode-toggle" onclick="toggleTheme()"></button>
+
+</body>
+</html>
+
